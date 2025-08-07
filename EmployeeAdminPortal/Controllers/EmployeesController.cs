@@ -1,89 +1,62 @@
 ﻿
-using DataAccessLayer.Data;
+using BusinessLogicLayer.Service;
 using EmployeeAdminPortal.Models.Dto;
 using EmployeeAdminPortal.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeAdminPortal.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class EmployeesController : ControllerBase
+    [Route("api/[controller]")]
+    public class EmployeeController : ControllerBase
     {
-        private readonly ApplicationDbContext dbContext;
+        private readonly IEmployeeService _employeeService;
 
-        public EmployeesController(ApplicationDbContext dbContext)
+        public EmployeeController(IEmployeeService employeeService)
         {
-            this.dbContext = dbContext;
+            _employeeService = employeeService;
         }
 
         [HttpGet]
-        public IActionResult GetAllEmployees()
+        public IActionResult GetAll()
         {
-            var allEmployees = dbContext.Employees.ToList();
-            return Ok(allEmployees);
+            var employees = _employeeService.GetAllEmployees();
+            return Ok(employees);
         }
 
-        [HttpGet]
-        [Route("{id:guid}")]
-        public IActionResult GetEmployeeById(Guid id) {
-            var employee = dbContext.Employees.Find(id);
-
-            if(employee is null)
-            {
+        [HttpGet("{id}")]
+        public IActionResult GetById(Guid id)
+        {
+            var employee = _employeeService.GetEmployeeById(id);
+            if (employee == null)
                 return NotFound();
-            }
             return Ok(employee);
-
         }
 
         [HttpPost]
-        public IActionResult AddEmployee(EmployeeDto addEmployeeDto) {
-
-            var employeeEntity = new Employee()
-            {
-                Name = addEmployeeDto.Name,
-                Email = addEmployeeDto.Email,
-                Phone = addEmployeeDto.Phone,
-                Salary = addEmployeeDto.Salary
-            };
-            dbContext.Employees.Add(employeeEntity);
-            dbContext.SaveChanges();
-
-            return Ok(employeeEntity);
+        public IActionResult Create(EmployeeDto employeeDto)
+        {
+            var created = _employeeService.AddEmployee(employeeDto);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
-        [HttpPut]
-        [Route("{id:guid}")]
-        public IActionResult UpdateEmployee(Guid id , EmployeeDto updateEmployeeDto) {
-            var employee = dbContext.Employees.Find(id);
-            if(employee is null)
-            {
+        [HttpPut("{id}")]
+        public IActionResult Update(Guid id, EmployeeDto employee)
+        {
+            var updated = _employeeService.UpdateEmployee(id, employee);
+            if (updated == null)
                 return NotFound();
-            }
-            employee.Name = updateEmployeeDto.Name;
-            employee.Email = updateEmployeeDto.Email;
-            employee.Phone = updateEmployeeDto.Phone;
-            employee.Salary = updateEmployeeDto.Salary;
-
-            dbContext.Employees.Update(employee);
-            dbContext.SaveChanges();
-            return Ok(employee);
+            return Ok(updated);
         }
 
-        [HttpDelete]
-        public IActionResult DeleteEmployee(Guid id) {
-
-            var employee = dbContext.Employees.Find(id);
-            if (employee is null)
-            {
+        [HttpDelete("{id}")]
+        public IActionResult Delete(Guid id)
+        {
+            var deleted = _employeeService.DeleteEmployee(id);
+            if (!deleted)
                 return NotFound();
-            }
-
-            dbContext.Employees.Remove(employee);
-            dbContext.SaveChanges();
-            return Ok();
-
+            return NoContent();
         }
     }
+
 }
