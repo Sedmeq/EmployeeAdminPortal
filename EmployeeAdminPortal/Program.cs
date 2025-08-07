@@ -1,4 +1,4 @@
-using EmployeeAdminPortal.Data;
+using DataAccessLayer.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

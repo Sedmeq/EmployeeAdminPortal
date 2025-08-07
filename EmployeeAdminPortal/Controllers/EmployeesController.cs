@@ -1,7 +1,7 @@
-﻿using EmployeeAdminPortal.Data;
+﻿
+using DataAccessLayer.Data;
 using EmployeeAdminPortal.Models.Dto;
 using EmployeeAdminPortal.Models.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeAdminPortal.Controllers
