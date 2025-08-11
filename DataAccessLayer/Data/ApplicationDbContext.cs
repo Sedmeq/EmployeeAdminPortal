@@ -1,4 +1,5 @@
 ﻿using EmployeeAdminPortal.Models.Entities;
+using Identity.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Data
@@ -10,5 +11,6 @@ namespace DataAccessLayer.Data
 
         }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
