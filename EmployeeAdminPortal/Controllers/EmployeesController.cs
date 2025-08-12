@@ -2,12 +2,14 @@
 using BusinessLogicLayer.Service;
 using EmployeeAdminPortal.Models.Dto;
 using EmployeeAdminPortal.Models.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeAdminPortal.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
