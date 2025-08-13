@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Models.Models.Dto;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -13,9 +14,9 @@ namespace Identity.Services
 {
     public class AuthService(ApplicationDbContext context, IConfiguration configuration) : IAuthService
     {
-        public async Task<string?> LoginAsync(EmployeeDto request)
+        public async Task<string?> LoginAsync(LoginDto request)
         {
-            var employee = await context.Employees.FirstOrDefaultAsync(e => e.Username == request.Username);
+            var employee = await context.Employees.FirstOrDefaultAsync(e => e.Email == request.Email);
             if (employee is null)
             {
                 return null;
@@ -30,20 +31,20 @@ namespace Identity.Services
             return CreateToken(employee);
         }
 
-        public async Task<Employee?> RegisterAsync(EmployeeDto request)
+        public async Task<Employee?> RegisterAsync(RegisterDto request)
         {
-            if (await context.Employees.AnyAsync(e => e.Username == request.Username))
+            if (await context.Employees.AnyAsync(e => e.Email == request.Email))
             {
                 return null;
             }
 
             var employee = new Employee
             {
-                Name = request.Name,
+                //Name = request.Name,
                 Username = request.Username,
                 Email = request.Email,
-                Phone = request.Phone,
-                Salary = request.Salary,
+                //Phone = request.Phone,
+                //Salary = request.Salary,
                 PasswordHash = ""
             };
 

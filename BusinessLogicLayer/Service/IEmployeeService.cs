@@ -6,7 +6,7 @@ namespace BusinessLogicLayer.Service
     {
         List<Employee> GetAllEmployees();
         Employee GetEmployeeById(Guid id);
-        Employee AddEmployee(EmployeeDto employeeDto);
+        Task<Employee?> AddEmployeeAsync(EmployeeDto employeeDto);
         Employee UpdateEmployee(Guid id, EmployeeDto updatedEmployee);
         bool DeleteEmployee(Guid id);
     }

@@ -2,6 +2,7 @@
 using EmployeeAdminPortal.Models.Dto;
 using EmployeeAdminPortal.Models.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogicLayer.Service
 {
@@ -24,11 +25,19 @@ namespace BusinessLogicLayer.Service
             return _context.Employees.Find(id);
         }
 
-        public Employee AddEmployee(EmployeeDto employeeDto)
+        public async Task<Employee?> AddEmployeeAsync(EmployeeDto employeeDto)
         {
+            // Email mövcuddurmu yoxla
+            var existingEmployee = await _context.Employees
+                .FirstOrDefaultAsync(e => e.Email == employeeDto.Email);
+
+            if (existingEmployee is not null)
+            {
+                return null; // Email artıq mövcuddur
+            }
+
             var employee = new Employee
             {
-                Name = employeeDto.Name,
                 Username = employeeDto.Username,
                 Email = employeeDto.Email,
                 Phone = employeeDto.Phone,
@@ -42,7 +51,7 @@ namespace BusinessLogicLayer.Service
             employee.PasswordHash = hashedPassword;
 
             _context.Employees.Add(employee);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return employee;
         }
@@ -55,7 +64,7 @@ namespace BusinessLogicLayer.Service
                 return null;
             }
 
-            employee.Name = updatedEmployee.Name;
+            //employee.Name = updatedEmployee.Name;
             employee.Username = updatedEmployee.Username;
             employee.Email = updatedEmployee.Email;
             employee.Phone = updatedEmployee.Phone;

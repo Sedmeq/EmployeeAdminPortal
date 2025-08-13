@@ -34,11 +34,15 @@ namespace EmployeeAdminPortal.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(EmployeeDto employeeDto)
+        public async Task<IActionResult> Create(EmployeeDto employeeDto)
         {
-            var created = _employeeService.AddEmployee(employeeDto);
+            var created = await _employeeService.AddEmployeeAsync(employeeDto);
+            if (created == null)
+                return BadRequest("Email artıq mövcuddur");
+
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
+
 
         [HttpPut("{id}")]
         public IActionResult Update(Guid id, EmployeeDto employee)

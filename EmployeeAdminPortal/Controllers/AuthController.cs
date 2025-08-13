@@ -2,6 +2,7 @@
 using EmployeeAdminPortal.Models.Dto;
 using Identity.Services;
 using Microsoft.AspNetCore.Mvc;
+using Models.Models.Dto;
 
 namespace EmployeeAdminPortal.Controllers
 {
@@ -10,19 +11,19 @@ namespace EmployeeAdminPortal.Controllers
     public class AuthController(IAuthService authService) : ControllerBase
     {
         [HttpPost("register")]
-        public async Task<ActionResult<Employee>> Register(EmployeeDto request)
+        public async Task<ActionResult<Employee>> Register(RegisterDto request)
         {
             var employee = await authService.RegisterAsync(request);
             if (employee is null)
             {
-                return BadRequest("Username already exists");
+                return BadRequest("Email already exists");
             }
 
             // Password-u response-da göstərmirik
             var responseEmployee = new
             {
                 employee.Id,
-                employee.Name,
+                //employee.Name,
                 employee.Username,
                 employee.Email,
                 employee.Phone,
@@ -33,7 +34,7 @@ namespace EmployeeAdminPortal.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(EmployeeDto request)
+        public async Task<ActionResult<string>> Login(LoginDto request)
         {
             var token = await authService.LoginAsync(request);
             if (token is null)
