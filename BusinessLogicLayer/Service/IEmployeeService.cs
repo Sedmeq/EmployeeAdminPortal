@@ -1,6 +1,5 @@
 ﻿using EmployeeAdminPortal.Models.Dto;
 using EmployeeAdminPortal.Models.Entities;
-
 namespace BusinessLogicLayer.Service
 {
     public interface IEmployeeService

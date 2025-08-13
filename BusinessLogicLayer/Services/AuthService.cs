@@ -1,64 +1,71 @@
 ﻿using DataAccessLayer.Data;
-using Identity.Entities;
-using Identity.Models;
+using EmployeeAdminPortal.Models.Dto;
+using EmployeeAdminPortal.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using PasswordVerificationResult = Microsoft.AspNetCore.Identity.PasswordVerificationResult;
 
 namespace Identity.Services
 {
-    public class AuthService(ApplicationDbContext context , IConfiguration configuration) : IAuthService
+    public class AuthService(ApplicationDbContext context, IConfiguration configuration) : IAuthService
     {
-        public async Task<string?> LoginAsync(UserDto request)
+        public async Task<string?> LoginAsync(EmployeeDto request)
         {
-            var user = await context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
-            if (user is null)
+            var employee = await context.Employees.FirstOrDefaultAsync(e => e.Username == request.Username);
+            if (employee is null)
             {
                 return null;
             }
-            if (new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.Password)
+
+            if (new PasswordHasher<Employee>().VerifyHashedPassword(employee, employee.PasswordHash, request.Password)
                 == PasswordVerificationResult.Failed)
             {
                 return null;
             }
-            return CreateToken(user);
+
+            return CreateToken(employee);
         }
 
-        public async Task<User?> RegisterAsync(UserDto request)
+        public async Task<Employee?> RegisterAsync(EmployeeDto request)
         {
-            if( await context.Users.AnyAsync(u => u.Username == request.Username))
+            if (await context.Employees.AnyAsync(e => e.Username == request.Username))
             {
                 return null;
             }
 
-            var user = new User();
-            var hashedPassword = new PasswordHasher<User>()
-            .HashPassword(user, request.Password);
+            var employee = new Employee
+            {
+                Name = request.Name,
+                Username = request.Username,
+                Email = request.Email,
+                Phone = request.Phone,
+                Salary = request.Salary,
+                PasswordHash = ""
+            };
 
-            user.Username = request.Username;
-            user.PasswordHash = hashedPassword;
+            var hashedPassword = new PasswordHasher<Employee>()
+                .HashPassword(employee, request.Password);
 
-            context.Users.Add(user);
+            employee.PasswordHash = hashedPassword;
+
+            context.Employees.Add(employee);
             await context.SaveChangesAsync();
 
-            return user;
+            return employee;
         }
-        private string CreateToken(User user)
+
+        private string CreateToken(Employee employee)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-
+                new Claim(ClaimTypes.Name, employee.Username),
+                new Claim(ClaimTypes.NameIdentifier, employee.Id.ToString())
             };
+
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(configuration.GetValue<string>("AppSettings:Token")!));
 

@@ -1,7 +1,5 @@
-﻿
-using BusinessLogicLayer.Service;
+﻿using BusinessLogicLayer.Service;
 using EmployeeAdminPortal.Models.Dto;
-using EmployeeAdminPortal.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

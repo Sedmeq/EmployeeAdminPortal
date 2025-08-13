@@ -1,5 +1,5 @@
-﻿using Identity.Entities;
-using Identity.Models;
+﻿using EmployeeAdminPortal.Models.Dto;
+using EmployeeAdminPortal.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ namespace Identity.Services
 {
     public interface IAuthService
     {
-        Task<string?> LoginAsync(UserDto request);
-        Task<User?> RegisterAsync(UserDto request);
+        Task<string?> LoginAsync(EmployeeDto request);
+        Task<Employee?> RegisterAsync(EmployeeDto request);
     }
 }
