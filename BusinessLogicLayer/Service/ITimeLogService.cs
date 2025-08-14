@@ -22,6 +22,9 @@ namespace BusinessLogicLayer.Service
         // Get all employees time logs (for admin)
         Task<List<TimeLogDto>> GetAllTimeLogsAsync(DateTime? fromDate = null, DateTime? toDate = null);
 
+        // Get time logs by department (for department bosses)
+        Task<List<TimeLogDto>> GetTimeLogsByDepartmentAsync(Guid departmentId, DateTime? fromDate = null, DateTime? toDate = null);
+
         // Get daily summary
         Task<DailyTimeLogSummaryDto> GetDailyTimeLogSummaryAsync(Guid employeeId, DateTime date);
 

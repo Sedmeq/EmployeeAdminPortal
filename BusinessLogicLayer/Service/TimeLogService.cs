@@ -13,6 +13,8 @@ namespace BusinessLogicLayer.Service
     public class TimeLogService : ITimeLogService
     {
         private readonly ApplicationDbContext _context;
+        private const string DateTimeFormat = "dd.MM.yyyy HH:mm:ss";
+        private const string DateFormat = "dd.MM.yyyy";
 
         public TimeLogService(ApplicationDbContext context)
         {
@@ -22,7 +24,11 @@ namespace BusinessLogicLayer.Service
         public async Task<TimeLogDto?> CheckInAsync(Guid employeeId, CheckInDto checkInDto)
         {
             // Check if employee exists
-            var employee = await _context.Employees.FindAsync(employeeId);
+            var employee = await _context.Employees
+                .Include(e => e.Department)
+                .Include(e => e.Role)
+                .FirstOrDefaultAsync(e => e.Id == employeeId);
+
             if (employee == null)
                 return null;
 
@@ -44,23 +50,16 @@ namespace BusinessLogicLayer.Service
             _context.EmployeeTimeLogs.Add(timeLog);
             await _context.SaveChangesAsync();
 
-            return new TimeLogDto
-            {
-                Id = timeLog.Id,
-                EmployeeId = timeLog.EmployeeId,
-                EmployeeName = employee.Username,
-                CheckInTime = timeLog.CheckInTime,
-                CheckOutTime = timeLog.CheckOutTime,
-                WorkDuration = timeLog.WorkDuration,
-                Notes = timeLog.Notes,
-                IsCheckedOut = timeLog.IsCheckedOut
-            };
+            return ConvertToTimeLogDto(timeLog, employee);
         }
 
         public async Task<TimeLogDto?> CheckOutAsync(Guid employeeId, CheckOutDto checkOutDto)
         {
             var activeSession = await _context.EmployeeTimeLogs
                 .Include(t => t.Employee)
+                    .ThenInclude(e => e.Department)
+                .Include(t => t.Employee)
+                    .ThenInclude(e => e.Role)
                 .Where(t => t.EmployeeId == employeeId && t.CheckOutTime == null)
                 .FirstOrDefaultAsync();
 
@@ -80,46 +79,32 @@ namespace BusinessLogicLayer.Service
 
             await _context.SaveChangesAsync();
 
-            return new TimeLogDto
-            {
-                Id = activeSession.Id,
-                EmployeeId = activeSession.EmployeeId,
-                EmployeeName = activeSession.Employee.Username,
-                CheckInTime = activeSession.CheckInTime,
-                CheckOutTime = activeSession.CheckOutTime,
-                WorkDuration = activeSession.WorkDuration,
-                Notes = activeSession.Notes,
-                IsCheckedOut = activeSession.IsCheckedOut
-            };
+            return ConvertToTimeLogDto(activeSession, activeSession.Employee);
         }
 
         public async Task<TimeLogDto?> GetActiveSessionAsync(Guid employeeId)
         {
             var activeSession = await _context.EmployeeTimeLogs
                 .Include(t => t.Employee)
+                    .ThenInclude(e => e.Department)
+                .Include(t => t.Employee)
+                    .ThenInclude(e => e.Role)
                 .Where(t => t.EmployeeId == employeeId && t.CheckOutTime == null)
                 .FirstOrDefaultAsync();
 
             if (activeSession == null)
                 return null;
 
-            return new TimeLogDto
-            {
-                Id = activeSession.Id,
-                EmployeeId = activeSession.EmployeeId,
-                EmployeeName = activeSession.Employee.Username,
-                CheckInTime = activeSession.CheckInTime,
-                CheckOutTime = activeSession.CheckOutTime,
-                WorkDuration = activeSession.WorkDuration,
-                Notes = activeSession.Notes,
-                IsCheckedOut = activeSession.IsCheckedOut
-            };
+            return ConvertToTimeLogDto(activeSession, activeSession.Employee);
         }
 
         public async Task<List<TimeLogDto>> GetEmployeeTimeLogsAsync(Guid employeeId, DateTime? fromDate = null, DateTime? toDate = null)
         {
             var query = _context.EmployeeTimeLogs
                 .Include(t => t.Employee)
+                    .ThenInclude(e => e.Department)
+                .Include(t => t.Employee)
+                    .ThenInclude(e => e.Role)
                 .Where(t => t.EmployeeId == employeeId);
 
             if (fromDate.HasValue)
@@ -132,22 +117,17 @@ namespace BusinessLogicLayer.Service
                 .OrderByDescending(t => t.CheckInTime)
                 .ToListAsync();
 
-            return timeLogs.Select(t => new TimeLogDto
-            {
-                Id = t.Id,
-                EmployeeId = t.EmployeeId,
-                EmployeeName = t.Employee.Username,
-                CheckInTime = t.CheckInTime,
-                CheckOutTime = t.CheckOutTime,
-                WorkDuration = t.WorkDuration,
-                Notes = t.Notes,
-                IsCheckedOut = t.IsCheckedOut
-            }).ToList();
+            return timeLogs.Select(t => ConvertToTimeLogDto(t, t.Employee)).ToList();
         }
 
         public async Task<List<TimeLogDto>> GetAllTimeLogsAsync(DateTime? fromDate = null, DateTime? toDate = null)
         {
-            var query = _context.EmployeeTimeLogs.Include(t => t.Employee).AsQueryable();
+            var query = _context.EmployeeTimeLogs
+                .Include(t => t.Employee)
+                    .ThenInclude(e => e.Department)
+                .Include(t => t.Employee)
+                    .ThenInclude(e => e.Role)
+                .AsQueryable();
 
             if (fromDate.HasValue)
                 query = query.Where(t => t.CheckInTime >= fromDate.Value);
@@ -159,17 +139,29 @@ namespace BusinessLogicLayer.Service
                 .OrderByDescending(t => t.CheckInTime)
                 .ToListAsync();
 
-            return timeLogs.Select(t => new TimeLogDto
-            {
-                Id = t.Id,
-                EmployeeId = t.EmployeeId,
-                EmployeeName = t.Employee.Username,
-                CheckInTime = t.CheckInTime,
-                CheckOutTime = t.CheckOutTime,
-                WorkDuration = t.WorkDuration,
-                Notes = t.Notes,
-                IsCheckedOut = t.IsCheckedOut
-            }).ToList();
+            return timeLogs.Select(t => ConvertToTimeLogDto(t, t.Employee)).ToList();
+        }
+
+        public async Task<List<TimeLogDto>> GetTimeLogsByDepartmentAsync(Guid departmentId, DateTime? fromDate = null, DateTime? toDate = null)
+        {
+            var query = _context.EmployeeTimeLogs
+                .Include(t => t.Employee)
+                    .ThenInclude(e => e.Department)
+                .Include(t => t.Employee)
+                    .ThenInclude(e => e.Role)
+                .Where(t => t.Employee.DepartmentId == departmentId);
+
+            if (fromDate.HasValue)
+                query = query.Where(t => t.CheckInTime >= fromDate.Value);
+
+            if (toDate.HasValue)
+                query = query.Where(t => t.CheckInTime <= toDate.Value.AddDays(1));
+
+            var timeLogs = await query
+                .OrderByDescending(t => t.CheckInTime)
+                .ToListAsync();
+
+            return timeLogs.Select(t => ConvertToTimeLogDto(t, t.Employee)).ToList();
         }
 
         public async Task<DailyTimeLogSummaryDto> GetDailyTimeLogSummaryAsync(Guid employeeId, DateTime date)
@@ -179,6 +171,9 @@ namespace BusinessLogicLayer.Service
 
             var dailyLogs = await _context.EmployeeTimeLogs
                 .Include(t => t.Employee)
+                    .ThenInclude(e => e.Department)
+                .Include(t => t.Employee)
+                    .ThenInclude(e => e.Role)
                 .Where(t => t.EmployeeId == employeeId &&
                            t.CheckInTime >= startDate &&
                            t.CheckInTime < endDate)
@@ -189,22 +184,16 @@ namespace BusinessLogicLayer.Service
                 .Where(t => t.WorkDuration.HasValue)
                 .Sum(t => t.WorkDuration.Value.Ticks);
 
+            var totalTimeSpan = new TimeSpan(totalWorkTime);
+
             return new DailyTimeLogSummaryDto
             {
-                Date = date.Date,
-                TotalWorkTime = new TimeSpan(totalWorkTime),
+                Date = date.ToString(DateFormat),
+                DateRaw = date.Date,
+                TotalWorkTime = FormatTimeSpan(totalTimeSpan),
+                TotalWorkTimeRaw = totalTimeSpan,
                 CheckInCount = dailyLogs.Count,
-                TimeLogs = dailyLogs.Select(t => new TimeLogDto
-                {
-                    Id = t.Id,
-                    EmployeeId = t.EmployeeId,
-                    EmployeeName = t.Employee.Username,
-                    CheckInTime = t.CheckInTime,
-                    CheckOutTime = t.CheckOutTime,
-                    WorkDuration = t.WorkDuration,
-                    Notes = t.Notes,
-                    IsCheckedOut = t.IsCheckedOut
-                }).ToList()
+                TimeLogs = dailyLogs.Select(t => ConvertToTimeLogDto(t, t.Employee)).ToList()
             };
         }
 
@@ -230,6 +219,36 @@ namespace BusinessLogicLayer.Service
 
             var totalTicks = timeLogs.Sum(t => t.WorkDuration.Value.Ticks);
             return new TimeSpan(totalTicks);
+        }
+
+        private TimeLogDto ConvertToTimeLogDto(EmployeeTimeLog timeLog, EmployeeAdminPortal.Models.Entities.Employee employee)
+        {
+            return new TimeLogDto
+            {
+                Id = timeLog.Id,
+                EmployeeId = timeLog.EmployeeId,
+                EmployeeName = employee.Username,
+                DepartmentName = employee.Department?.Name,
+                RoleName = employee.Role?.Name,
+                CheckInTime = timeLog.CheckInTime.ToString(DateTimeFormat),
+                CheckInTimeRaw = timeLog.CheckInTime,
+                CheckOutTime = timeLog.CheckOutTime?.ToString(DateTimeFormat),
+                CheckOutTimeRaw = timeLog.CheckOutTime,
+                WorkDuration = timeLog.WorkDuration.HasValue ? FormatTimeSpan(timeLog.WorkDuration.Value) : null,
+                WorkDurationRaw = timeLog.WorkDuration,
+                WorkDurationInMinutes = timeLog.WorkDuration.HasValue ? (int)timeLog.WorkDuration.Value.TotalMinutes : null,
+                Notes = timeLog.Notes,
+                IsCheckedOut = timeLog.IsCheckedOut
+            };
+        }
+
+        private string FormatTimeSpan(TimeSpan timeSpan)
+        {
+            if (timeSpan.TotalDays >= 1)
+            {
+                return $"{(int)timeSpan.TotalDays} gün, {timeSpan.Hours:D2}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}";
+            }
+            return $"{timeSpan.Hours:D2}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}";
         }
     }
 }
