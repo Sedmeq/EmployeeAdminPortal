@@ -188,9 +188,10 @@ namespace BusinessLogicLayer.Service
                 .FirstOrDefault(e => e.Id == id);
         }
 
+        // DÜZƏLTMƏ: Bu metod səhv idi, düzəldildi
         public async Task<Employee?> AddEmployeesAsync(EmployeeDto employeeDto)
         {
-            var result = await AddEmployeesAsync(employeeDto);
+            var result = await AddEmployeeAsync(employeeDto); // AddEmployeeAsync çağırırıq, AddEmployeesAsync deyil
             if (result == null) return null;
 
             return await _context.Employees.FindAsync(result.Id);

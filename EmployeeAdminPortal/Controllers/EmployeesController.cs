@@ -67,19 +67,19 @@ namespace EmployeeAdminPortal.Controllers
             return Ok(new { data = employeeDto });
         }
 
-        [HttpGet("my-profile")]
-        public async Task<IActionResult> GetMyProfile()
-        {
-            var employeeId = GetCurrentEmployeeId();
-            if (employeeId == null)
-                return Unauthorized("Employee ID not found in token");
+        //[HttpGet("my-profile")]
+        //public async Task<IActionResult> GetMyProfile()
+        //{
+        //    var employeeId = GetCurrentEmployeeId();
+        //    if (employeeId == null)
+        //        return Unauthorized("Employee ID not found in token");
 
-            var employee = await _employeeService.GetEmployeeByIdAsync(employeeId.Value);
-            if (employee == null)
-                return NotFound(new { message = "Employee not found" });
+        //    var employee = await _employeeService.GetEmployeeByIdAsync(employeeId.Value);
+        //    if (employee == null)
+        //        return NotFound(new { message = "Employee not found" });
 
-            return Ok(new { data = employee });
-        }
+        //    return Ok(new { data = employee });
+        //}
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] EmployeeDto employeeDto)
@@ -127,22 +127,22 @@ namespace EmployeeAdminPortal.Controllers
             return Ok(new { data = updated });
         }
 
-        [HttpPut("my-profile")]
-        public async Task<IActionResult> UpdateMyProfile([FromBody] EmployeeDto employeeDto)
-        {
-            var employeeId = GetCurrentEmployeeId();
-            if (employeeId == null)
-                return Unauthorized("Employee ID not found in token");
+        //[HttpPut("my-profile")]
+        //public async Task<IActionResult> UpdateMyProfile([FromBody] EmployeeDto employeeDto)
+        //{
+        //    var employeeId = GetCurrentEmployeeId();
+        //    if (employeeId == null)
+        //        return Unauthorized("Employee ID not found in token");
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        //    if (!ModelState.IsValid)
+        //        return BadRequest(ModelState);
 
-            var updated = await _employeeService.UpdateEmployeeAsync(employeeId.Value, employeeDto);
-            if (updated == null)
-                return BadRequest(new { message = "Email already exists or employee not found" });
+        //    var updated = await _employeeService.UpdateEmployeeAsync(employeeId.Value, employeeDto);
+        //    if (updated == null)
+        //        return BadRequest(new { message = "Email already exists or employee not found" });
 
-            return Ok(new { data = updated });
-        }
+        //    return Ok(new { data = updated });
+        //}
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
@@ -162,24 +162,24 @@ namespace EmployeeAdminPortal.Controllers
             return Ok(new { message = "Employee deleted successfully" });
         }
 
-        [HttpGet("department/{departmentId}")]
-        public async Task<IActionResult> GetByDepartment(Guid departmentId)
-        {
-            var currentEmployee = await GetCurrentEmployeeAsync();
-            if (currentEmployee == null)
-                return Unauthorized("Employee not found");
+        //[HttpGet("department/{departmentId}")]
+        //public async Task<IActionResult> GetByDepartment(Guid departmentId)
+        //{
+        //    var currentEmployee = await GetCurrentEmployeeAsync();
+        //    if (currentEmployee == null)
+        //        return Unauthorized("Employee not found");
 
-            // Check permissions
-            if (!HasAdminAccess(currentEmployee))
-            {
-                // Department bosses can only see their own department
-                if (!HasDepartmentBossAccess(currentEmployee) || currentEmployee.DepartmentId != departmentId)
-                    return Forbid("Access denied. You can only view employees from your department.");
-            }
+        //    // Check permissions
+        //    if (!HasAdminAccess(currentEmployee))
+        //    {
+        //        // Department bosses can only see their own department
+        //        if (!HasDepartmentBossAccess(currentEmployee) || currentEmployee.DepartmentId != departmentId)
+        //            return Forbid("Access denied. You can only view employees from your department.");
+        //    }
 
-            var employees = await _employeeService.GetEmployeesByDepartmentAsync(departmentId);
-            return Ok(new { data = employees, count = employees.Count });
-        }
+        //    var employees = await _employeeService.GetEmployeesByDepartmentAsync(departmentId);
+        //    return Ok(new { data = employees, count = employees.Count });
+        //}
 
         #region Helper Methods
 
