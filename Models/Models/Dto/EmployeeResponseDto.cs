@@ -17,6 +17,10 @@ namespace Models.Models.Dto
         public string? DepartmentName { get; set; }
         public Guid? RoleId { get; set; }
         public string? RoleName { get; set; }
+        public Guid? WorkScheduleId { get; set; } // Yeni əlavə edilmiş
+        public string? WorkScheduleName { get; set; } // Yeni əlavə edilmiş
+        public string? WorkStartTime { get; set; } // Yeni əlavə edilmiş
+        public string? WorkEndTime { get; set; } // Yeni əlavə edilmiş
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }

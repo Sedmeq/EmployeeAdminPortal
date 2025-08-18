@@ -26,5 +26,6 @@ namespace EmployeeAdminPortal.Models.Dto
 
         public Guid? DepartmentId { get; set; }
         public Guid? RoleId { get; set; }
+        public Guid? WorkScheduleId { get; set; } // Yeni əlavə edilmiş
     }
 }

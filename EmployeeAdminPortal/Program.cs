@@ -1,4 +1,4 @@
-using BusinessLogicLayer.Service;
+﻿using BusinessLogicLayer.Service;
 using DataAccessLayer.Data;
 using Identity.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,34 +14,34 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
-{
-options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-});
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-c.SwaggerDoc("v1", new OpenApiInfo
-{
-Title = "Employee Admin Portal API",
-Version = "v1",
-Description = "Employee time tracking and management system with role-based access control"
-});
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Employee Admin Portal API",
+        Version = "v1",
+        Description = "Employee time tracking and management system with role-based access control and work schedule management"
+    });
 
-c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-{
-Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-Name = "Authorization",
-In = ParameterLocation.Header,
-Type = SecuritySchemeType.Http,
-Scheme = "bearer",
-BearerFormat = "JWT"
-});
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
 
-c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -56,13 +56,21 @@ c.AddSecurityRequirement(new OpenApiSecurityRequirement
         }
     });
 
-// Add custom schema for DateTime formatting
-c.MapType<DateTime>(() => new OpenApiSchema
-{
-Type = "string",
-Format = "date-time",
-Example = new Microsoft.OpenApi.Any.OpenApiString(DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"))
-});
+    // Add custom schema for DateTime formatting
+    c.MapType<DateTime>(() => new OpenApiSchema
+    {
+        Type = "string",
+        Format = "date-time",
+        Example = new Microsoft.OpenApi.Any.OpenApiString(DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"))
+    });
+
+    // Add custom schema for TimeSpan formatting
+    c.MapType<TimeSpan>(() => new OpenApiSchema
+    {
+        Type = "string",
+        Format = "time",
+        Example = new Microsoft.OpenApi.Any.OpenApiString("08:00:00")
+    });
 });
 
 // Database configuration
@@ -73,37 +81,38 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // JWT Authentication configuration
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
-{
-options.TokenValidationParameters = new TokenValidationParameters
-{
-ValidateIssuer = true,
-ValidateAudience = true,
-ValidateLifetime = true,
-ValidateIssuerSigningKey = true,
-ValidIssuer = builder.Configuration["AppSettings:Issuer"],
-ValidAudience = builder.Configuration["AppSettings:Audience"],
-IssuerSigningKey = new SymmetricSecurityKey(
-        Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"]!)),
-ClockSkew = TimeSpan.Zero // Reduce clock skew to zero
-};
-});
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["AppSettings:Issuer"],
+            ValidAudience = builder.Configuration["AppSettings:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"]!)),
+            ClockSkew = TimeSpan.Zero // Reduce clock skew to zero
+        };
+    });
 
 // Register services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-builder.Services.AddScoped<ITimeLogService, TimeLogService>();
+builder.Services.AddScoped<ITimeLogService, EnhancedTimeLogService>(); // Yenilənmiş servisi istifadə edirik
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IWorkScheduleService, WorkScheduleService>(); // Yeni əlavə edilmiş servis
 
 // CORS configuration
 builder.Services.AddCors(options =>
 {
-options.AddPolicy("AllowAll", policy =>
-{
-policy.AllowAnyOrigin()
-      .AllowAnyMethod()
-      .AllowAnyHeader();
-});
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
 });
 
 // Add AutoMapper if needed for future use
@@ -114,15 +123,15 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-c.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee Admin Portal API v1");
-c.RoutePrefix = "swagger"; // default
-// Set Swagger UI at root
-c.DefaultModelsExpandDepth(-1); // Disable swagger schemas at bottom
-c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.List);
-});
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee Admin Portal API v1");
+        c.RoutePrefix = "swagger"; // default
+        // Set Swagger UI at root
+        c.DefaultModelsExpandDepth(-1); // Disable swagger schemas at bottom
+        c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.List);
+    });
 }
 
 app.UseHttpsRedirection();

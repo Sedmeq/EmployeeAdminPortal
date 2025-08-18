@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EmployeeAdminPortal.Models.Entities
 {
+
     public class Employee
     {
         public Guid Id { get; set; }
@@ -26,6 +27,7 @@ namespace EmployeeAdminPortal.Models.Entities
         // Foreign Keys
         public Guid? DepartmentId { get; set; }
         public Guid? RoleId { get; set; }
+        public Guid? WorkScheduleId { get; set; } // Yeni əlavə edilmiş
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
@@ -33,6 +35,7 @@ namespace EmployeeAdminPortal.Models.Entities
         // Navigation Properties
         public virtual Department? Department { get; set; }
         public virtual Role? Role { get; set; }
+        public virtual WorkSchedule? WorkSchedule { get; set; } // Yeni əlavə edilmiş
         public virtual ICollection<EmployeeTimeLog> TimeLogs { get; set; } = new List<EmployeeTimeLog>();
     }
 }
