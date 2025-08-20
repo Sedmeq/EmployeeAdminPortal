@@ -55,7 +55,6 @@ namespace BusinessLogicLayer.Service
 
         public async Task<RoleResponseDto?> CreateRoleAsync(RoleDto roleDto)
         {
-            // Check if role name already exists
             if (await _context.Roles.AnyAsync(r => r.Name.ToLower() == roleDto.Name.ToLower()))
                 return null;
 
@@ -89,7 +88,6 @@ namespace BusinessLogicLayer.Service
             if (role == null)
                 return null;
 
-            // Check if new name conflicts with existing role
             if (await _context.Roles.AnyAsync(r => r.Id != id && r.Name.ToLower() == roleDto.Name.ToLower()))
                 return null;
 
@@ -119,15 +117,15 @@ namespace BusinessLogicLayer.Service
             return true;
         }
 
-        public async Task<bool> RoleExistsAsync(Guid id)
-        {
-            return await _context.Roles.AnyAsync(r => r.Id == id);
-        }
+        //public async Task<bool> RoleExistsAsync(Guid id)
+        //{
+        //    return await _context.Roles.AnyAsync(r => r.Id == id);
+        //}
 
-        public async Task<string?> GetRoleNameAsync(Guid roleId)
-        {
-            var role = await _context.Roles.FindAsync(roleId);
-            return role?.Name;
-        }
+        //public async Task<string?> GetRoleNameAsync(Guid roleId)
+        //{
+        //    var role = await _context.Roles.FindAsync(roleId);
+        //    return role?.Name;
+        //}
     }
 }

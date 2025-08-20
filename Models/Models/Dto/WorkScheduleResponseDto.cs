@@ -16,7 +16,7 @@ namespace Models.Models.Dto
         public int RequiredWorkHours { get; set; }
         public int MinimumWorkMinutes { get; set; }
         public int MaxLatenessMinutes { get; set; }
-        public int MaxEarlyLeaveMinutes { get; set; }
+        //public int MaxEarlyLeaveMinutes { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
         public int EmployeeCount { get; set; }

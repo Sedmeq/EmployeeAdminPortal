@@ -14,6 +14,6 @@ namespace BusinessLogicLayer.Service
         Task<DepartmentResponseDto?> CreateDepartmentAsync(DepartmentDto departmentDto);
         Task<DepartmentResponseDto?> UpdateDepartmentAsync(Guid id, DepartmentDto departmentDto);
         Task<bool> DeleteDepartmentAsync(Guid id);
-        Task<bool> DepartmentExistsAsync(Guid id);
+        //Task<bool> DepartmentExistsAsync(Guid id);
     }
 }

@@ -24,7 +24,6 @@ namespace BusinessLogicLayer.Service
 
         public async Task<TimeLogDto?> CheckInAsync(Guid employeeId, CheckInDto checkInDto)
         {
-            // Employee və onun work schedule məlumatını əldə et
             var employee = await _context.Employees
                 .Include(e => e.Department)
                 .Include(e => e.Role)
@@ -34,7 +33,6 @@ namespace BusinessLogicLayer.Service
             if (employee == null)
                 return null;
 
-            // Aktiv sessiya olub olmadığını yoxla
             var activeSession = await _context.EmployeeTimeLogs
                 .Where(t => t.EmployeeId == employeeId && t.CheckOutTime == null)
                 .FirstOrDefaultAsync();
@@ -74,7 +72,6 @@ namespace BusinessLogicLayer.Service
             activeSession.CheckOutTime = DateTime.Now;
             activeSession.CalculateWorkDuration();
 
-            // Notes-ları yeniləmək
             if (!string.IsNullOrEmpty(checkOutDto.Notes))
             {
                 activeSession.Notes = string.IsNullOrEmpty(activeSession.Notes)
@@ -267,7 +264,6 @@ namespace BusinessLogicLayer.Service
                 IsCheckedOut = timeLog.IsCheckedOut
             };
 
-            // Work Schedule analizi əlavə et
             if (employee.WorkSchedule != null)
             {
                 var schedule = employee.WorkSchedule;
@@ -278,7 +274,6 @@ namespace BusinessLogicLayer.Service
                 basicDto.ExpectedStartTime = schedule.StartTime.ToString(@"hh\:mm");
                 basicDto.ExpectedEndTime = schedule.EndTime.ToString(@"hh\:mm");
 
-                // Gecikmə hesabla
                 if (checkInTime > schedule.StartTime)
                 {
                     var lateness = checkInTime - schedule.StartTime;
@@ -292,22 +287,20 @@ namespace BusinessLogicLayer.Service
                 }
 
                 // Erkən gedişi hesabla
-                if (checkOutTime.HasValue && checkOutTime.Value < schedule.EndTime)
-                {
-                    var earlyLeave = schedule.EndTime - checkOutTime.Value;
-                    basicDto.EarlyLeaveTime = FormatTimeSpan(earlyLeave);
-                    basicDto.IsEarlyLeave = earlyLeave > TimeSpan.FromMinutes(schedule.MaxEarlyLeaveMinutes);
-                }
-                else
-                {
-                    basicDto.EarlyLeaveTime = checkOutTime.HasValue ? "00:00:00" : null;
-                    basicDto.IsEarlyLeave = false;
-                }
+                //if (checkOutTime.HasValue && checkOutTime.Value < schedule.EndTime)
+                //{
+                //    var earlyLeave = schedule.EndTime - checkOutTime.Value;
+                //    basicDto.EarlyLeaveTime = FormatTimeSpan(earlyLeave);
+                //    basicDto.IsEarlyLeave = earlyLeave > TimeSpan.FromMinutes(schedule.MaxEarlyLeaveMinutes);
+                //}
+                //else
+                //{
+                //    basicDto.EarlyLeaveTime = checkOutTime.HasValue ? "00:00:00" : null;
+                //    basicDto.IsEarlyLeave = false;
+                //}
 
-                // İş saatları daxilində olub olmadığını yoxla
                 basicDto.IsWithinSchedule = schedule.IsWithinWorkHours(checkInTime);
 
-                // İş effektivliyi hesabla
                 if (timeLog.WorkDuration.HasValue)
                 {
                     var expectedWorkTime = schedule.EndTime - schedule.StartTime;

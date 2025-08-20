@@ -31,8 +31,8 @@ namespace Models.Models.Dto
         [Range(0, 60)]
         public int MaxLatenessMinutes { get; set; } = 15;
 
-        [Range(0, 60)]
-        public int MaxEarlyLeaveMinutes { get; set; } = 15;
+        //[Range(0, 60)]
+        //public int MaxEarlyLeaveMinutes { get; set; } = 15;
 
         public bool IsActive { get; set; } = true;
     }

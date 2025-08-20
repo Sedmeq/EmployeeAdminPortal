@@ -59,27 +59,12 @@ namespace EmployeeAdminPortal.Controllers
             if (targetEmployee == null)
                 return NotFound(new { message = "Employee not found" });
 
-            // Check access permissions
             if (!CanAccessEmployeeData(currentEmployee, targetEmployee))
                 return Forbid("Access denied. You can only view employees from your department.");
 
             var employeeDto = await _employeeService.GetEmployeeByIdAsync(id);
             return Ok(new { data = employeeDto });
         }
-
-        //[HttpGet("my-profile")]
-        //public async Task<IActionResult> GetMyProfile()
-        //{
-        //    var employeeId = GetCurrentEmployeeId();
-        //    if (employeeId == null)
-        //        return Unauthorized("Employee ID not found in token");
-
-        //    var employee = await _employeeService.GetEmployeeByIdAsync(employeeId.Value);
-        //    if (employee == null)
-        //        return NotFound(new { message = "Employee not found" });
-
-        //    return Ok(new { data = employee });
-        //}
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] EmployeeDto employeeDto)
@@ -88,7 +73,6 @@ namespace EmployeeAdminPortal.Controllers
             if (currentEmployee == null)
                 return Unauthorized("Employee not found");
 
-            // Only Boss can create new employees
             if (!HasAdminAccess(currentEmployee))
                 return Forbid("Access denied. Admin role required.");
 
@@ -113,7 +97,6 @@ namespace EmployeeAdminPortal.Controllers
             if (targetEmployee == null)
                 return NotFound(new { message = "Employee not found" });
 
-            // Check permissions: Boss can update anyone, Department bosses can update their department employees, employees can update themselves
             if (!CanModifyEmployeeData(currentEmployee, targetEmployee))
                 return Forbid("Access denied. You don't have permission to modify this employee.");
 
@@ -127,23 +110,6 @@ namespace EmployeeAdminPortal.Controllers
             return Ok(new { data = updated });
         }
 
-        //[HttpPut("my-profile")]
-        //public async Task<IActionResult> UpdateMyProfile([FromBody] EmployeeDto employeeDto)
-        //{
-        //    var employeeId = GetCurrentEmployeeId();
-        //    if (employeeId == null)
-        //        return Unauthorized("Employee ID not found in token");
-
-        //    if (!ModelState.IsValid)
-        //        return BadRequest(ModelState);
-
-        //    var updated = await _employeeService.UpdateEmployeeAsync(employeeId.Value, employeeDto);
-        //    if (updated == null)
-        //        return BadRequest(new { message = "Email already exists or employee not found" });
-
-        //    return Ok(new { data = updated });
-        //}
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -151,7 +117,6 @@ namespace EmployeeAdminPortal.Controllers
             if (currentEmployee == null)
                 return Unauthorized("Employee not found");
 
-            // Only Boss can delete employees
             if (!HasAdminAccess(currentEmployee))
                 return Forbid("Access denied. Admin role required.");
 
@@ -161,25 +126,6 @@ namespace EmployeeAdminPortal.Controllers
 
             return Ok(new { message = "Employee deleted successfully" });
         }
-
-        //[HttpGet("department/{departmentId}")]
-        //public async Task<IActionResult> GetByDepartment(Guid departmentId)
-        //{
-        //    var currentEmployee = await GetCurrentEmployeeAsync();
-        //    if (currentEmployee == null)
-        //        return Unauthorized("Employee not found");
-
-        //    // Check permissions
-        //    if (!HasAdminAccess(currentEmployee))
-        //    {
-        //        // Department bosses can only see their own department
-        //        if (!HasDepartmentBossAccess(currentEmployee) || currentEmployee.DepartmentId != departmentId)
-        //            return Forbid("Access denied. You can only view employees from your department.");
-        //    }
-
-        //    var employees = await _employeeService.GetEmployeesByDepartmentAsync(departmentId);
-        //    return Ok(new { data = employees, count = employees.Count });
-        //}
 
         #region Helper Methods
 
@@ -215,28 +161,23 @@ namespace EmployeeAdminPortal.Controllers
 
         private bool CanAccessEmployeeData(EmployeeAdminPortal.Models.Entities.Employee currentEmployee, EmployeeAdminPortal.Models.Entities.Employee targetEmployee)
         {
-            // Boss can access everyone
             if (HasAdminAccess(currentEmployee))
                 return true;
 
-            // Department bosses can access employees from their department
             if (HasDepartmentBossAccess(currentEmployee))
             {
                 return currentEmployee.DepartmentId != null &&
                        currentEmployee.DepartmentId == targetEmployee.DepartmentId;
             }
 
-            // Employees can only access their own data
             return currentEmployee.Id == targetEmployee.Id;
         }
 
         private bool CanModifyEmployeeData(EmployeeAdminPortal.Models.Entities.Employee currentEmployee, EmployeeAdminPortal.Models.Entities.Employee targetEmployee)
         {
-            // Boss can modify everyone
             if (HasAdminAccess(currentEmployee))
                 return true;
 
-            // Department bosses can modify employees from their department (except other bosses)
             if (HasDepartmentBossAccess(currentEmployee))
             {
                 var targetIsNotBoss = targetEmployee.Role?.Name == "Employee";
@@ -245,7 +186,6 @@ namespace EmployeeAdminPortal.Controllers
                        targetIsNotBoss;
             }
 
-            // Employees can only modify their own data
             return currentEmployee.Id == targetEmployee.Id;
         }
 

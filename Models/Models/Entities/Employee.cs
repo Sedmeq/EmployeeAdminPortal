@@ -24,18 +24,16 @@ namespace EmployeeAdminPortal.Models.Entities
         [Required]
         public string PasswordHash { get; set; } = string.Empty;
 
-        // Foreign Keys
         public Guid? DepartmentId { get; set; }
         public Guid? RoleId { get; set; }
-        public Guid? WorkScheduleId { get; set; } // Yeni əlavə edilmiş
-
+        public Guid? WorkScheduleId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 
         // Navigation Properties
         public virtual Department? Department { get; set; }
         public virtual Role? Role { get; set; }
-        public virtual WorkSchedule? WorkSchedule { get; set; } // Yeni əlavə edilmiş
+        public virtual WorkSchedule? WorkSchedule { get; set; }
         public virtual ICollection<EmployeeTimeLog> TimeLogs { get; set; } = new List<EmployeeTimeLog>();
     }
 }

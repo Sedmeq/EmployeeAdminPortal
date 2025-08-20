@@ -21,7 +21,6 @@ namespace Models.Models.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        // Navigation properties
         public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
     }
 }

@@ -33,7 +33,7 @@ namespace BusinessLogicLayer.Service
                     RequiredWorkHours = ws.RequiredWorkHours,
                     MinimumWorkMinutes = ws.MinimumWorkMinutes,
                     MaxLatenessMinutes = ws.MaxLatenessMinutes,
-                    MaxEarlyLeaveMinutes = ws.MaxEarlyLeaveMinutes,
+                    //MaxEarlyLeaveMinutes = ws.MaxEarlyLeaveMinutes,
                     CreatedAt = ws.CreatedAt,
                     IsActive = ws.IsActive,
                     EmployeeCount = ws.Employees.Count
@@ -60,7 +60,7 @@ namespace BusinessLogicLayer.Service
                 RequiredWorkHours = workSchedule.RequiredWorkHours,
                 MinimumWorkMinutes = workSchedule.MinimumWorkMinutes,
                 MaxLatenessMinutes = workSchedule.MaxLatenessMinutes,
-                MaxEarlyLeaveMinutes = workSchedule.MaxEarlyLeaveMinutes,
+                //MaxEarlyLeaveMinutes = workSchedule.MaxEarlyLeaveMinutes,
                 CreatedAt = workSchedule.CreatedAt,
                 IsActive = workSchedule.IsActive,
                 EmployeeCount = workSchedule.Employees.Count
@@ -69,11 +69,9 @@ namespace BusinessLogicLayer.Service
 
         public async Task<WorkScheduleResponseDto?> CreateWorkScheduleAsync(WorkScheduleDto workScheduleDto)
         {
-            // Check if schedule name already exists
             if (await _context.WorkSchedules.AnyAsync(ws => ws.Name.ToLower() == workScheduleDto.Name.ToLower()))
                 return null;
 
-            // Parse time strings
             if (!TimeSpan.TryParse(workScheduleDto.StartTime, out TimeSpan startTime) ||
                 !TimeSpan.TryParse(workScheduleDto.EndTime, out TimeSpan endTime))
                 return null;
@@ -88,7 +86,7 @@ namespace BusinessLogicLayer.Service
                 RequiredWorkHours = workScheduleDto.RequiredWorkHours,
                 MinimumWorkMinutes = workScheduleDto.MinimumWorkMinutes,
                 MaxLatenessMinutes = workScheduleDto.MaxLatenessMinutes,
-                MaxEarlyLeaveMinutes = workScheduleDto.MaxEarlyLeaveMinutes,
+                //MaxEarlyLeaveMinutes = workScheduleDto.MaxEarlyLeaveMinutes,
                 IsActive = workScheduleDto.IsActive,
                 CreatedAt = DateTime.Now
             };
@@ -106,7 +104,7 @@ namespace BusinessLogicLayer.Service
                 RequiredWorkHours = workSchedule.RequiredWorkHours,
                 MinimumWorkMinutes = workSchedule.MinimumWorkMinutes,
                 MaxLatenessMinutes = workSchedule.MaxLatenessMinutes,
-                MaxEarlyLeaveMinutes = workSchedule.MaxEarlyLeaveMinutes,
+                //MaxEarlyLeaveMinutes = workSchedule.MaxEarlyLeaveMinutes,
                 CreatedAt = workSchedule.CreatedAt,
                 IsActive = workSchedule.IsActive,
                 EmployeeCount = 0
@@ -122,11 +120,9 @@ namespace BusinessLogicLayer.Service
             if (workSchedule == null)
                 return null;
 
-            // Check if new name conflicts with existing schedule
             if (await _context.WorkSchedules.AnyAsync(ws => ws.Id != id && ws.Name.ToLower() == workScheduleDto.Name.ToLower()))
                 return null;
 
-            // Parse time strings
             if (!TimeSpan.TryParse(workScheduleDto.StartTime, out TimeSpan startTime) ||
                 !TimeSpan.TryParse(workScheduleDto.EndTime, out TimeSpan endTime))
                 return null;
@@ -138,7 +134,7 @@ namespace BusinessLogicLayer.Service
             workSchedule.RequiredWorkHours = workScheduleDto.RequiredWorkHours;
             workSchedule.MinimumWorkMinutes = workScheduleDto.MinimumWorkMinutes;
             workSchedule.MaxLatenessMinutes = workScheduleDto.MaxLatenessMinutes;
-            workSchedule.MaxEarlyLeaveMinutes = workScheduleDto.MaxEarlyLeaveMinutes;
+            //workSchedule.MaxEarlyLeaveMinutes = workScheduleDto.MaxEarlyLeaveMinutes;
             workSchedule.IsActive = workScheduleDto.IsActive;
 
             await _context.SaveChangesAsync();
@@ -153,7 +149,7 @@ namespace BusinessLogicLayer.Service
                 RequiredWorkHours = workSchedule.RequiredWorkHours,
                 MinimumWorkMinutes = workSchedule.MinimumWorkMinutes,
                 MaxLatenessMinutes = workSchedule.MaxLatenessMinutes,
-                MaxEarlyLeaveMinutes = workSchedule.MaxEarlyLeaveMinutes,
+                //MaxEarlyLeaveMinutes = workSchedule.MaxEarlyLeaveMinutes,
                 CreatedAt = workSchedule.CreatedAt,
                 IsActive = workSchedule.IsActive,
                 EmployeeCount = workSchedule.Employees.Count
@@ -166,10 +162,9 @@ namespace BusinessLogicLayer.Service
             if (workSchedule == null)
                 return false;
 
-            // Check if any employees are using this schedule
             var hasEmployees = await _context.Employees.AnyAsync(e => e.WorkScheduleId == id);
             if (hasEmployees)
-                return false; // Cannot delete if employees are using it
+                return false;
 
             _context.WorkSchedules.Remove(workSchedule);
             await _context.SaveChangesAsync();
@@ -196,7 +191,7 @@ namespace BusinessLogicLayer.Service
                     RequiredWorkHours = ws.RequiredWorkHours,
                     MinimumWorkMinutes = ws.MinimumWorkMinutes,
                     MaxLatenessMinutes = ws.MaxLatenessMinutes,
-                    MaxEarlyLeaveMinutes = ws.MaxEarlyLeaveMinutes,
+                    //MaxEarlyLeaveMinutes = ws.MaxEarlyLeaveMinutes,
                     CreatedAt = ws.CreatedAt,
                     IsActive = ws.IsActive,
                     EmployeeCount = ws.Employees.Count
@@ -204,34 +199,34 @@ namespace BusinessLogicLayer.Service
                 .ToListAsync();
         }
 
-        public async Task<bool> IsWorkingTimeAsync(Guid workScheduleId, TimeSpan time)
-        {
-            var schedule = await _context.WorkSchedules.FindAsync(workScheduleId);
-            return schedule?.IsWithinWorkHours(time) ?? false;
-        }
+        //public async Task<bool> IsWorkingTimeAsync(Guid workScheduleId, TimeSpan time)
+        //{
+        //    var schedule = await _context.WorkSchedules.FindAsync(workScheduleId);
+        //    return schedule?.IsWithinWorkHours(time) ?? false;
+        //}
 
-        public async Task<bool> IsLateAsync(Guid workScheduleId, TimeSpan checkInTime)
-        {
-            var schedule = await _context.WorkSchedules.FindAsync(workScheduleId);
-            return schedule?.IsLate(checkInTime) ?? false;
-        }
+        //public async Task<bool> IsLateAsync(Guid workScheduleId, TimeSpan checkInTime)
+        //{
+        //    var schedule = await _context.WorkSchedules.FindAsync(workScheduleId);
+        //    return schedule?.IsLate(checkInTime) ?? false;
+        //}
 
-        public async Task<bool> IsEarlyLeaveAsync(Guid workScheduleId, TimeSpan checkOutTime)
-        {
-            var schedule = await _context.WorkSchedules.FindAsync(workScheduleId);
-            return schedule?.IsEarlyLeave(checkOutTime) ?? false;
-        }
+        //public async Task<bool> IsEarlyLeaveAsync(Guid workScheduleId, TimeSpan checkOutTime)
+        //{
+        //    var schedule = await _context.WorkSchedules.FindAsync(workScheduleId);
+        //    return schedule?.IsEarlyLeave(checkOutTime) ?? false;
+        //}
 
-        public async Task<TimeSpan> GetLatenessTimeAsync(Guid workScheduleId, TimeSpan checkInTime)
-        {
-            var schedule = await _context.WorkSchedules.FindAsync(workScheduleId);
-            return schedule?.GetLatenessTime(checkInTime) ?? TimeSpan.Zero;
-        }
+        //public async Task<TimeSpan> GetLatenessTimeAsync(Guid workScheduleId, TimeSpan checkInTime)
+        //{
+        //    var schedule = await _context.WorkSchedules.FindAsync(workScheduleId);
+        //    return schedule?.GetLatenessTime(checkInTime) ?? TimeSpan.Zero;
+        //}
 
-        public async Task<TimeSpan> GetEarlyLeaveTimeAsync(Guid workScheduleId, TimeSpan checkOutTime)
-        {
-            var schedule = await _context.WorkSchedules.FindAsync(workScheduleId);
-            return schedule?.GetEarlyLeaveTime(checkOutTime) ?? TimeSpan.Zero;
-        }
+        //public async Task<TimeSpan> GetEarlyLeaveTimeAsync(Guid workScheduleId, TimeSpan checkOutTime)
+        //{
+        //    var schedule = await _context.WorkSchedules.FindAsync(workScheduleId);
+        //    return schedule?.GetEarlyLeaveTime(checkOutTime) ?? TimeSpan.Zero;
+        //}
     }
 }

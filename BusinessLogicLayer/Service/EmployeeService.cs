@@ -21,7 +21,7 @@ namespace BusinessLogicLayer.Service
             return await _context.Employees
                 .Include(e => e.Department)
                 .Include(e => e.Role)
-                .Include(e => e.WorkSchedule) // Yeni əlavə edilmiş
+                .Include(e => e.WorkSchedule) 
                 .Select(e => new EmployeeResponseDto
                 {
                     Id = e.Id,
@@ -33,10 +33,10 @@ namespace BusinessLogicLayer.Service
                     DepartmentName = e.Department != null ? e.Department.Name : null,
                     RoleId = e.RoleId,
                     RoleName = e.Role != null ? e.Role.Name : null,
-                    WorkScheduleId = e.WorkScheduleId, // Yeni əlavə edilmiş
-                    WorkScheduleName = e.WorkSchedule != null ? e.WorkSchedule.Name : null, // Yeni əlavə edilmiş
-                    WorkStartTime = e.WorkSchedule != null ? e.WorkSchedule.StartTime.ToString(@"hh\:mm") : null, // Yeni əlavə edilmiş
-                    WorkEndTime = e.WorkSchedule != null ? e.WorkSchedule.EndTime.ToString(@"hh\:mm") : null, // Yeni əlavə edilmiş
+                    WorkScheduleId = e.WorkScheduleId, 
+                    WorkScheduleName = e.WorkSchedule != null ? e.WorkSchedule.Name : null, 
+                    WorkStartTime = e.WorkSchedule != null ? e.WorkSchedule.StartTime.ToString(@"hh\:mm") : null, 
+                    WorkEndTime = e.WorkSchedule != null ? e.WorkSchedule.EndTime.ToString(@"hh\:mm") : null,
                     CreatedAt = e.CreatedAt,
                     UpdatedAt = e.UpdatedAt
                 })
@@ -48,7 +48,7 @@ namespace BusinessLogicLayer.Service
             return await _context.Employees
                 .Include(e => e.Department)
                 .Include(e => e.Role)
-                .Include(e => e.WorkSchedule) // Yeni əlavə edilmiş
+                .Include(e => e.WorkSchedule) 
                 .Where(e => e.DepartmentId == departmentId)
                 .Select(e => new EmployeeResponseDto
                 {
@@ -61,10 +61,10 @@ namespace BusinessLogicLayer.Service
                     DepartmentName = e.Department != null ? e.Department.Name : null,
                     RoleId = e.RoleId,
                     RoleName = e.Role != null ? e.Role.Name : null,
-                    WorkScheduleId = e.WorkScheduleId, // Yeni əlavə edilmiş
-                    WorkScheduleName = e.WorkSchedule != null ? e.WorkSchedule.Name : null, // Yeni əlavə edilmiş
-                    WorkStartTime = e.WorkSchedule != null ? e.WorkSchedule.StartTime.ToString(@"hh\:mm") : null, // Yeni əlavə edilmiş
-                    WorkEndTime = e.WorkSchedule != null ? e.WorkSchedule.EndTime.ToString(@"hh\:mm") : null, // Yeni əlavə edilmiş
+                    WorkScheduleId = e.WorkScheduleId,
+                    WorkScheduleName = e.WorkSchedule != null ? e.WorkSchedule.Name : null, 
+                    WorkStartTime = e.WorkSchedule != null ? e.WorkSchedule.StartTime.ToString(@"hh\:mm") : null,
+                    WorkEndTime = e.WorkSchedule != null ? e.WorkSchedule.EndTime.ToString(@"hh\:mm") : null, 
                     CreatedAt = e.CreatedAt,
                     UpdatedAt = e.UpdatedAt
                 })
@@ -76,7 +76,7 @@ namespace BusinessLogicLayer.Service
             var employee = await _context.Employees
                 .Include(e => e.Department)
                 .Include(e => e.Role)
-                .Include(e => e.WorkSchedule) // Yeni əlavə edilmiş
+                .Include(e => e.WorkSchedule)
                 .FirstOrDefaultAsync(e => e.Id == id);
 
             if (employee == null)
@@ -93,10 +93,10 @@ namespace BusinessLogicLayer.Service
                 DepartmentName = employee.Department?.Name,
                 RoleId = employee.RoleId,
                 RoleName = employee.Role?.Name,
-                WorkScheduleId = employee.WorkScheduleId, // Yeni əlavə edilmiş
-                WorkScheduleName = employee.WorkSchedule?.Name, // Yeni əlavə edilmiş
-                WorkStartTime = employee.WorkSchedule?.StartTime.ToString(@"hh\:mm"), // Yeni əlavə edilmiş
-                WorkEndTime = employee.WorkSchedule?.EndTime.ToString(@"hh\:mm"), // Yeni əlavə edilmiş
+                WorkScheduleId = employee.WorkScheduleId, 
+                WorkScheduleName = employee.WorkSchedule?.Name, 
+                WorkStartTime = employee.WorkSchedule?.StartTime.ToString(@"hh\:mm"), 
+                WorkEndTime = employee.WorkSchedule?.EndTime.ToString(@"hh\:mm"),
                 CreatedAt = employee.CreatedAt,
                 UpdatedAt = employee.UpdatedAt
             };
@@ -104,12 +104,11 @@ namespace BusinessLogicLayer.Service
 
         public async Task<EmployeeResponseDto?> AddEmployeeAsync(EmployeeDto employeeDto)
         {
-            // Email mövcuddurmu yoxla
             var existingEmployee = await _context.Employees
                 .FirstOrDefaultAsync(e => e.Email == employeeDto.Email);
 
             if (existingEmployee != null)
-                return null; // Email artıq mövcuddur
+                return null;
 
             var employee = new Employee
             {
@@ -119,7 +118,7 @@ namespace BusinessLogicLayer.Service
                 Salary = employeeDto.Salary,
                 DepartmentId = employeeDto.DepartmentId,
                 RoleId = employeeDto.RoleId,
-                WorkScheduleId = employeeDto.WorkScheduleId, // Yeni əlavə edilmiş
+                WorkScheduleId = employeeDto.WorkScheduleId, 
                 PasswordHash = "",
                 CreatedAt = DateTime.Now
             };
@@ -132,7 +131,6 @@ namespace BusinessLogicLayer.Service
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync();
 
-            // Get the employee with department, role and work schedule info
             return await GetEmployeeByIdAsync(employee.Id);
         }
 
@@ -142,7 +140,6 @@ namespace BusinessLogicLayer.Service
             if (employee == null)
                 return null;
 
-            // Check if email is being changed and if it already exists
             if (employee.Email != updatedEmployeeDto.Email)
             {
                 var existingEmployee = await _context.Employees
@@ -157,10 +154,9 @@ namespace BusinessLogicLayer.Service
             employee.Salary = updatedEmployeeDto.Salary;
             employee.DepartmentId = updatedEmployeeDto.DepartmentId;
             employee.RoleId = updatedEmployeeDto.RoleId;
-            employee.WorkScheduleId = updatedEmployeeDto.WorkScheduleId; // Yeni əlavə edilmiş
+            employee.WorkScheduleId = updatedEmployeeDto.WorkScheduleId;
             employee.UpdatedAt = DateTime.Now;
 
-            // Əgər yeni password verilmişsə, onu da update edirik
             if (!string.IsNullOrEmpty(updatedEmployeeDto.Password))
             {
                 var hashedPassword = new PasswordHasher<Employee>()
@@ -188,48 +184,48 @@ namespace BusinessLogicLayer.Service
             return await _context.Employees
                 .Include(e => e.Department)
                 .Include(e => e.Role)
-                .Include(e => e.WorkSchedule) // Yeni əlavə edilmiş
+                .Include(e => e.WorkSchedule) 
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
         // Legacy methods for backward compatibility
-        public List<Employee> GetAllEmployees()
-        {
-            return _context.Employees
-                .Include(e => e.Department)
-                .Include(e => e.Role)
-                .Include(e => e.WorkSchedule) // Yeni əlavə edilmiş
-                .ToList();
-        }
+        //public List<Employee> GetAllEmployees()
+        //{
+        //    return _context.Employees
+        //        .Include(e => e.Department)
+        //        .Include(e => e.Role)
+        //        .Include(e => e.WorkSchedule) // Yeni əlavə edilmiş
+        //        .ToList();
+        //}
 
-        public Employee GetEmployeeById(Guid id)
-        {
-            return _context.Employees
-                .Include(e => e.Department)
-                .Include(e => e.Role)
-                .Include(e => e.WorkSchedule) // Yeni əlavə edilmiş
-                .FirstOrDefault(e => e.Id == id);
-        }
+        //public Employee GetEmployeeById(Guid id)
+        //{
+        //    return _context.Employees
+        //        .Include(e => e.Department)
+        //        .Include(e => e.Role)
+        //        .Include(e => e.WorkSchedule) // Yeni əlavə edilmiş
+        //        .FirstOrDefault(e => e.Id == id);
+        //}
 
-        public async Task<Employee?> AddEmployeesAsync(EmployeeDto employeeDto)
-        {
-            var result = await AddEmployeeAsync(employeeDto);
-            if (result == null) return null;
+        //public async Task<Employee?> AddEmployeesAsync(EmployeeDto employeeDto)
+        //{
+        //    var result = await AddEmployeeAsync(employeeDto);
+        //    if (result == null) return null;
 
-            return await _context.Employees.FindAsync(result.Id);
-        }
+        //    return await _context.Employees.FindAsync(result.Id);
+        //}
 
-        public Employee UpdateEmployee(Guid id, EmployeeDto updatedEmployee)
-        {
-            var result = UpdateEmployeeAsync(id, updatedEmployee).Result;
-            if (result == null) return null;
+        //public Employee UpdateEmployee(Guid id, EmployeeDto updatedEmployee)
+        //{
+        //    var result = UpdateEmployeeAsync(id, updatedEmployee).Result;
+        //    if (result == null) return null;
 
-            return _context.Employees.Find(result.Id);
-        }
+        //    return _context.Employees.Find(result.Id);
+        //}
 
-        public bool DeleteEmployee(Guid id)
-        {
-            return DeleteEmployeeAsync(id).Result;
-        }
+        //public bool DeleteEmployee(Guid id)
+        //{
+        //    return DeleteEmployeeAsync(id).Result;
+        //}
     }
 }

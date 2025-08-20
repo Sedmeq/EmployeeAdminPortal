@@ -78,24 +78,24 @@ namespace EmployeeAdminPortal.Controllers
             return Ok(new { message = "Work schedule deleted successfully" });
         }
 
-        [HttpGet("{id}/validate-time")]
-        public async Task<IActionResult> ValidateTime(Guid id, [FromQuery] string time)
-        {
-            if (!TimeSpan.TryParse(time, out TimeSpan timeSpan))
-                return BadRequest(new { message = "Invalid time format. Use HH:mm format" });
+        //[HttpGet("{id}/validate-time")]
+        //public async Task<IActionResult> ValidateTime(Guid id, [FromQuery] string time)
+        //{
+        //    if (!TimeSpan.TryParse(time, out TimeSpan timeSpan))
+        //        return BadRequest(new { message = "Invalid time format. Use HH:mm format" });
 
-            var isWorkingTime = await _workScheduleService.IsWorkingTimeAsync(id, timeSpan);
-            var isLate = await _workScheduleService.IsLateAsync(id, timeSpan);
-            var latenessTime = await _workScheduleService.GetLatenessTimeAsync(id, timeSpan);
+        //    var isWorkingTime = await _workScheduleService.IsWorkingTimeAsync(id, timeSpan);
+        //    var isLate = await _workScheduleService.IsLateAsync(id, timeSpan);
+        //    var latenessTime = await _workScheduleService.GetLatenessTimeAsync(id, timeSpan);
 
-            return Ok(new
-            {
-                time = time,
-                isWorkingTime = isWorkingTime,
-                isLate = isLate,
-                latenessMinutes = latenessTime.TotalMinutes,
-                latenessTime = latenessTime.ToString(@"hh\:mm\:ss")
-            });
-        }
+        //    return Ok(new
+        //    {
+        //        time = time,
+        //        isWorkingTime = isWorkingTime,
+        //        isLate = isLate,
+        //        latenessMinutes = latenessTime.TotalMinutes,
+        //        latenessTime = latenessTime.ToString(@"hh\:mm\:ss")
+        //    });
+        //}
     }
 }

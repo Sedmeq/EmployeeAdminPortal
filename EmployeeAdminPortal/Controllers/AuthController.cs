@@ -19,15 +19,14 @@ namespace EmployeeAdminPortal.Controllers
                 return BadRequest("Email already exists");
             }
 
-            // Password-u response-da göstərmirik
             var responseEmployee = new
             {
                 employee.Id,
                 //employee.Name,
                 employee.Username,
                 employee.Email,
-                employee.Phone,
-                employee.Salary
+                //employee.Phone,
+                //employee.Salary
             };
 
             return Ok(responseEmployee);

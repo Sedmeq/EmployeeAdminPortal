@@ -53,20 +53,20 @@ namespace EmployeeAdminPortal.Controllers
             return Ok(new { message = "Checked out successfully", data = result });
         }
 
-        [HttpGet("active-session")]
-        public async Task<IActionResult> GetActiveSession()
-        {
-            var employeeId = GetCurrentEmployeeId();
-            if (employeeId == null)
-                return Unauthorized("Employee ID not found in token");
+        //[HttpGet("active-session")]
+        //public async Task<IActionResult> GetActiveSession()
+        //{
+        //    var employeeId = GetCurrentEmployeeId();
+        //    if (employeeId == null)
+        //        return Unauthorized("Employee ID not found in token");
 
-            var result = await _timeLogService.GetActiveSessionAsync(employeeId.Value);
+        //    var result = await _timeLogService.GetActiveSessionAsync(employeeId.Value);
 
-            if (result == null)
-                return Ok(new { message = "No active session", data = (object)null });
+        //    if (result == null)
+        //        return Ok(new { message = "No active session", data = (object)null });
 
-            return Ok(new { message = "Active session found", data = result });
-        }
+        //    return Ok(new { message = "Active session found", data = result });
+        //}
 
         [HttpGet("status")]
         public async Task<IActionResult> GetStatus()
@@ -93,10 +93,8 @@ namespace EmployeeAdminPortal.Controllers
             if (employeeId == null)
                 return Unauthorized("Employee ID not found in token");
 
-            // Bütün time log-ları əldə et (zaman məhdudiyyəti olmadan)
             var allLogs = await _timeLogService.GetEmployeeTimeLogsAsync(employeeId.Value);
 
-            // Günlərə görə qruplaşdır
             var groupedByDay = allLogs
                 .GroupBy(log => log.CheckInTimeRaw.Date)
                 .OrderByDescending(group => group.Key)
@@ -133,12 +131,10 @@ namespace EmployeeAdminPortal.Controllers
 
             if (HasAdminAccess(currentEmployee))
             {
-                // Boss bütün işçilərin time log-larını görə bilər
                 result = await _timeLogService.GetAllTimeLogsAsync();
             }
             else if (HasDepartmentBossAccess(currentEmployee))
             {
-                // Department boss öz departmentinin işçilərini görə bilər
                 if (currentEmployee.DepartmentId == null)
                     return BadRequest("Department not assigned to your account");
 
@@ -149,7 +145,6 @@ namespace EmployeeAdminPortal.Controllers
                 return Forbid("Access denied. Boss role required.");
             }
 
-            // İşçilərə görə qruplaşdır
             var groupedByEmployee = result
                 .GroupBy(log => new { log.EmployeeId, log.EmployeeName, log.DepartmentName, log.RoleName })
                 .Select(group => new
@@ -161,13 +156,12 @@ namespace EmployeeAdminPortal.Controllers
                     TotalWorkTime = CalculateTotalWorkTime(group.ToList()),
                     TotalSessions = group.Count(),
                     WorkDays = group.GroupBy(log => log.CheckInTimeRaw.Date).Count(),
-                    // Son 10 gün
                     RecentLogs = group
                         .OrderByDescending(log => log.CheckInTimeRaw)
                         .Take(10)
                         .Select(log => new
                         {
-                            Date = log.CheckInTime.Split(' ')[0], // Sadəcə tarixi əldə et
+                            Date = log.CheckInTime.Split(' ')[0],
                             CheckIn = log.CheckInTime,
                             CheckOut = log.CheckOutTime,
                             Duration = log.WorkDuration,
@@ -196,14 +190,11 @@ namespace EmployeeAdminPortal.Controllers
             if (targetEmployee == null)
                 return NotFound("Target employee not found");
 
-            // İcazə yoxla
             if (!CanAccessEmployeeData(currentEmployee, targetEmployee))
                 return Forbid("Access denied. You can only view employees from your department.");
 
-            // Seçilmiş işçinin bütün log-larını əldə et
             var allLogs = await _timeLogService.GetEmployeeTimeLogsAsync(employeeId);
 
-            // Günlərə görə qruplaşdır
             var groupedByDay = allLogs
                 .GroupBy(log => log.CheckInTimeRaw.Date)
                 .OrderByDescending(group => group.Key)
@@ -243,7 +234,6 @@ namespace EmployeeAdminPortal.Controllers
             if (targetEmployee == null)
                 return NotFound("Target employee not found");
 
-            // İcazə yoxla
             if (!CanAccessEmployeeData(currentEmployee, targetEmployee))
                 return Forbid("Access denied. You can only view employees from your department.");
 
@@ -298,18 +288,15 @@ namespace EmployeeAdminPortal.Controllers
 
         private bool CanAccessEmployeeData(EmployeeAdminPortal.Models.Entities.Employee currentEmployee, EmployeeAdminPortal.Models.Entities.Employee targetEmployee)
         {
-            // Boss hər kəsin məlumatını görə bilər
             if (HasAdminAccess(currentEmployee))
                 return true;
 
-            // Department boss öz departmentinin işçilərini görə bilər
             if (HasDepartmentBossAccess(currentEmployee))
             {
                 return currentEmployee.DepartmentId != null &&
                        currentEmployee.DepartmentId == targetEmployee.DepartmentId;
             }
 
-            // İşçilər yalnız öz məlumatlarını görə bilər
             return currentEmployee.Id == targetEmployee.Id;
         }
 

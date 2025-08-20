@@ -14,7 +14,7 @@ namespace BusinessLogicLayer.Service
         Task<RoleResponseDto?> CreateRoleAsync(RoleDto roleDto);
         Task<RoleResponseDto?> UpdateRoleAsync(Guid id, RoleDto roleDto);
         Task<bool> DeleteRoleAsync(Guid id);
-        Task<bool> RoleExistsAsync(Guid id);
-        Task<string?> GetRoleNameAsync(Guid roleId);
+        //Task<bool> RoleExistsAsync(Guid id);
+        //Task<string?> GetRoleNameAsync(Guid roleId);
     }
 }

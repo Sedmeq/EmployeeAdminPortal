@@ -4,6 +4,7 @@ using DataAccessLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250818063246_migrationnn")]
+    partial class migrationnn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,42 +104,42 @@ namespace DataAccessLayer.Migrations
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2391),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5925),
                             Description = "Information Technology Department",
                             Name = "IT"
                         },
                         new
                         {
                             Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2394),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5929),
                             Description = "Marketing Department",
                             Name = "Marketing"
                         },
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-333333333333"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2396),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5932),
                             Description = "Finance Department",
                             Name = "Finance"
                         },
                         new
                         {
                             Id = new Guid("44444444-4444-4444-4444-444444444444"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2398),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5935),
                             Description = "Human Resources Department",
                             Name = "HR"
                         },
                         new
                         {
                             Id = new Guid("55555555-5555-5555-5555-555555555555"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2400),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5939),
                             Description = "Sales Department",
                             Name = "Sales"
                         },
                         new
                         {
                             Id = new Guid("66666666-6666-6666-6666-666666666666"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2403),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5942),
                             Description = "Operations Department",
                             Name = "Operations"
                         });
@@ -196,56 +199,56 @@ namespace DataAccessLayer.Migrations
                         new
                         {
                             Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2407),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5948),
                             Description = "Company Boss - Full Access",
                             Name = "Boss"
                         },
                         new
                         {
                             Id = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2409),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5951),
                             Description = "IT Department Boss",
                             Name = "Boss-IT"
                         },
                         new
                         {
                             Id = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2411),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5954),
                             Description = "Marketing Department Boss",
                             Name = "Boss-Marketing"
                         },
                         new
                         {
                             Id = new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2414),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5958),
                             Description = "Finance Department Boss",
                             Name = "Boss-Finance"
                         },
                         new
                         {
                             Id = new Guid("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2416),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5961),
                             Description = "HR Department Boss",
                             Name = "Boss-HR"
                         },
                         new
                         {
                             Id = new Guid("ffffffff-ffff-ffff-ffff-ffffffffffff"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2418),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5964),
                             Description = "Sales Department Boss",
                             Name = "Boss-Sales"
                         },
                         new
                         {
                             Id = new Guid("77777777-7777-7777-7777-777777777777"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2461),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5967),
                             Description = "Operations Department Boss",
                             Name = "Boss-Operations"
                         },
                         new
                         {
                             Id = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2463),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5970),
                             Description = "Regular Employee",
                             Name = "Employee"
                         });
@@ -269,6 +272,9 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<int>("MaxEarlyLeaveMinutes")
+                        .HasColumnType("int");
 
                     b.Property<int>("MaxLatenessMinutes")
                         .HasColumnType("int");
@@ -295,10 +301,11 @@ namespace DataAccessLayer.Migrations
                         new
                         {
                             Id = new Guid("99999999-9999-9999-9999-999999999991"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2377),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5903),
                             Description = "Standard 8:00-17:00 work schedule",
                             EndTime = new TimeSpan(0, 17, 0, 0, 0),
                             IsActive = true,
+                            MaxEarlyLeaveMinutes = 15,
                             MaxLatenessMinutes = 15,
                             MinimumWorkMinutes = 480,
                             Name = "8-17",
@@ -308,10 +315,11 @@ namespace DataAccessLayer.Migrations
                         new
                         {
                             Id = new Guid("99999999-9999-9999-9999-999999999992"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2381),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5910),
                             Description = "Standard 9:00-18:00 work schedule",
                             EndTime = new TimeSpan(0, 18, 0, 0, 0),
                             IsActive = true,
+                            MaxEarlyLeaveMinutes = 15,
                             MaxLatenessMinutes = 15,
                             MinimumWorkMinutes = 480,
                             Name = "9-18",
@@ -321,10 +329,11 @@ namespace DataAccessLayer.Migrations
                         new
                         {
                             Id = new Guid("99999999-9999-9999-9999-999999999993"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2384),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5914),
                             Description = "Morning shift 9:00-14:00",
                             EndTime = new TimeSpan(0, 14, 0, 0, 0),
                             IsActive = true,
+                            MaxEarlyLeaveMinutes = 10,
                             MaxLatenessMinutes = 10,
                             MinimumWorkMinutes = 300,
                             Name = "9-14",
@@ -334,10 +343,11 @@ namespace DataAccessLayer.Migrations
                         new
                         {
                             Id = new Guid("99999999-9999-9999-9999-999999999994"),
-                            CreatedAt = new DateTime(2025, 8, 18, 14, 19, 48, 214, DateTimeKind.Local).AddTicks(2387),
+                            CreatedAt = new DateTime(2025, 8, 18, 10, 32, 45, 705, DateTimeKind.Local).AddTicks(5919),
                             Description = "Afternoon shift 14:00-18:00",
                             EndTime = new TimeSpan(0, 18, 0, 0, 0),
                             IsActive = true,
+                            MaxEarlyLeaveMinutes = 10,
                             MaxLatenessMinutes = 10,
                             MinimumWorkMinutes = 240,
                             Name = "14-18",

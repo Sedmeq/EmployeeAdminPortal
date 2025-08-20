@@ -119,9 +119,9 @@ namespace BusinessLogicLayer.Service
             return true;
         }
 
-        public async Task<bool> DepartmentExistsAsync(Guid id)
-        {
-            return await _context.Departments.AnyAsync(d => d.Id == id);
-        }
+        //public async Task<bool> DepartmentExistsAsync(Guid id)
+        //{
+        //    return await _context.Departments.AnyAsync(d => d.Id == id);
+        //}
     }
 }

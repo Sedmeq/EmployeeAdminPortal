@@ -23,7 +23,6 @@ namespace BusinessLogicLayer.Service
 
         public async Task<TimeLogDto?> CheckInAsync(Guid employeeId, CheckInDto checkInDto)
         {
-            // Check if employee exists
             var employee = await _context.Employees
                 .Include(e => e.Department)
                 .Include(e => e.Role)
@@ -32,13 +31,12 @@ namespace BusinessLogicLayer.Service
             if (employee == null)
                 return null;
 
-            // Check if employee is already checked in
             var activeSession = await _context.EmployeeTimeLogs
                 .Where(t => t.EmployeeId == employeeId && t.CheckOutTime == null)
                 .FirstOrDefaultAsync();
 
             if (activeSession != null)
-                return null; // Employee is already checked in
+                return null;
 
             var timeLog = new EmployeeTimeLog
             {
@@ -64,12 +62,11 @@ namespace BusinessLogicLayer.Service
                 .FirstOrDefaultAsync();
 
             if (activeSession == null)
-                return null; // No active session found
+                return null;
 
             activeSession.CheckOutTime = DateTime.Now;
             activeSession.CalculateWorkDuration();
 
-            // Update notes if provided
             if (!string.IsNullOrEmpty(checkOutDto.Notes))
             {
                 activeSession.Notes = string.IsNullOrEmpty(activeSession.Notes)

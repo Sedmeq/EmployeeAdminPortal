@@ -18,10 +18,10 @@ namespace BusinessLogicLayer.Service
         Task<List<WorkScheduleResponseDto>> GetActiveWorkSchedulesAsync();
 
         // İş saatı analizi metodları
-        Task<bool> IsWorkingTimeAsync(Guid workScheduleId, TimeSpan time);
-        Task<bool> IsLateAsync(Guid workScheduleId, TimeSpan checkInTime);
-        Task<bool> IsEarlyLeaveAsync(Guid workScheduleId, TimeSpan checkOutTime);
-        Task<TimeSpan> GetLatenessTimeAsync(Guid workScheduleId, TimeSpan checkInTime);
-        Task<TimeSpan> GetEarlyLeaveTimeAsync(Guid workScheduleId, TimeSpan checkOutTime);
+        //Task<bool> IsWorkingTimeAsync(Guid workScheduleId, TimeSpan time);
+        //Task<bool> IsLateAsync(Guid workScheduleId, TimeSpan checkInTime);
+        //Task<bool> IsEarlyLeaveAsync(Guid workScheduleId, TimeSpan checkOutTime);
+        //Task<TimeSpan> GetLatenessTimeAsync(Guid workScheduleId, TimeSpan checkInTime);
+        //Task<TimeSpan> GetEarlyLeaveTimeAsync(Guid workScheduleId, TimeSpan checkOutTime);
     }
 }

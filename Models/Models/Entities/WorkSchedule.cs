@@ -14,7 +14,7 @@ namespace Models.Models.Entities
 
         [Required]
         [MaxLength(50)]
-        public string Name { get; set; } = string.Empty; // "8-17", "9-18", "9-2", "2-6"
+        public string Name { get; set; } = string.Empty;
 
         [MaxLength(200)]
         public string? Description { get; set; }
@@ -43,7 +43,7 @@ namespace Models.Models.Entities
         /// <summary>
         /// Maksimum erkən gedişə icazə (dəqiqələrlə)
         /// </summary>
-        public int MaxEarlyLeaveMinutes { get; set; } = 15;
+        //public int MaxEarlyLeaveMinutes { get; set; } = 15;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
@@ -67,34 +67,34 @@ namespace Models.Models.Entities
             }
         }
 
-        public bool IsLate(TimeSpan checkInTime)
-        {
-            var allowedStartTime = StartTime.Add(TimeSpan.FromMinutes(MaxLatenessMinutes));
-            return checkInTime > allowedStartTime;
-        }
+        //public bool IsLate(TimeSpan checkInTime)
+        //{
+        //    var allowedStartTime = StartTime.Add(TimeSpan.FromMinutes(MaxLatenessMinutes));
+        //    return checkInTime > allowedStartTime;
+        //}
 
-        public bool IsEarlyLeave(TimeSpan checkOutTime)
-        {
-            var minimumEndTime = EndTime.Subtract(TimeSpan.FromMinutes(MaxEarlyLeaveMinutes));
-            return checkOutTime < minimumEndTime;
-        }
+        //public bool IsEarlyLeave(TimeSpan checkOutTime)
+        //{
+        //    var minimumEndTime = EndTime.Subtract(TimeSpan.FromMinutes(MaxEarlyLeaveMinutes));
+        //    return checkOutTime < minimumEndTime;
+        //}
 
-        public TimeSpan GetLatenessTime(TimeSpan checkInTime)
-        {
-            if (checkInTime > StartTime)
-            {
-                return checkInTime - StartTime;
-            }
-            return TimeSpan.Zero;
-        }
+        //public TimeSpan GetLatenessTime(TimeSpan checkInTime)
+        //{
+        //    if (checkInTime > StartTime)
+        //    {
+        //        return checkInTime - StartTime;
+        //    }
+        //    return TimeSpan.Zero;
+        //}
 
-        public TimeSpan GetEarlyLeaveTime(TimeSpan checkOutTime)
-        {
-            if (checkOutTime < EndTime)
-            {
-                return EndTime - checkOutTime;
-            }
-            return TimeSpan.Zero;
-        }
+        //public TimeSpan GetEarlyLeaveTime(TimeSpan checkOutTime)
+        //{
+        //    if (checkOutTime < EndTime)
+        //    {
+        //        return EndTime - checkOutTime;
+        //    }
+        //    return TimeSpan.Zero;
+        //}
     }
 }

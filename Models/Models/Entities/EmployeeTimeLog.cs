@@ -27,10 +27,8 @@ namespace Models.Models.Entities
         // Navigation property
         public Employee Employee { get; set; }
 
-        // Computed property
         public bool IsCheckedOut => CheckOutTime.HasValue;
 
-        // Method to calculate work duration
         public void CalculateWorkDuration()
         {
             if (CheckOutTime.HasValue)
