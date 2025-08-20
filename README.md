@@ -1,4 +1,4 @@
-# Employee Admin Portal
+# Employee Time Tracker
 
 A comprehensive employee time tracking and management system built with ASP.NET Core Web API, featuring role-based access control, work schedule management, and detailed time logging capabilities.
 
@@ -55,8 +55,8 @@ EmployeeAdminPortal/
 
 ### 1. Clone the Repository
 ```bash
-git clone <repository-url>
-cd EmployeeAdminPortal
+git clone https://github.com/Sedmeq/EmployeeTimeTracker.git
+cd EmployeeTimeTracker
 ```
 
 ### 2. Database Configuration
